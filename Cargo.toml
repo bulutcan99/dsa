@@ -1,0 +1,11 @@
+[package]
+name = "dsa"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.9.2"
+
+[[bin]]
+name = "binary_search_algorithm"
+path = "src/binary_search_algorithm.rs"
