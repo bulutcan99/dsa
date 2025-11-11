@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::time::Instant;
 use rand::rng;
 use rand::seq::SliceRandom;
@@ -7,9 +8,9 @@ fn main() {
     let mut data: Vec<i32> = (1..=10_000_000).collect();
     data.shuffle(&mut rng());
 
-    let target = 1_234_567;
+    let target = 112_123;
 
-    // Zaman ölçümü
+    // Timer
     let start = Instant::now();
     match linear_search(&data, target) {
         Some(index) => println!("Found {} at index: {} using linear search.", target, index),
@@ -47,16 +48,15 @@ where
 // Binary search function
 fn binary_search<T>(list: &[T], target: T) -> Option<usize>
 where
-    T: PartialOrd,
+    T: PartialOrd + Copy + Debug,
 {
     let mut first_part = 0;
     let mut last_part = list.len() - 1;
 
     while first_part <= last_part {
         let middle_part = first_part + (last_part - first_part) / 2;
-        let middle = &list[middle_part];
-
-        if middle == &target {
+        let middle = list.get(middle_part)?;
+        if *middle == target {
             return Some(middle_part);
         } else if target > *middle {
             first_part = middle_part + 1;
