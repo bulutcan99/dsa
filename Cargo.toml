@@ -9,3 +9,11 @@ rand = "0.9.2"
 [[bin]]
 name = "binary_search_algorithm"
 path = "src/binary_search_algorithm.rs"
+
+[[bin]]
+name = "two_sum_leet_code"
+path = "src/two_sum_leet_code.rs"
+
+[[bin]]
+name = "contains_nearby_duplicate"
+path = "src/contains_nearby_duplicate.rs"

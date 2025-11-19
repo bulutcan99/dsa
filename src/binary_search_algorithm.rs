@@ -1,3 +1,5 @@
+mod two_sum_leet_code;
+
 use std::fmt::Debug;
 use std::time::Instant;
 use rand::rng;
