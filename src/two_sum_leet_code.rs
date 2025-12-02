@@ -16,15 +16,17 @@ impl Solution {
     /// # Döndürür
     /// Toplamı target'a eşit olan iki indeksin [i, j] bulunduğu bir vektör.
     /// İndeksler küçükten büyüğe sıralanmalıdır.
-    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
-        let mut nums_with_index: HashMap<i32, i32> = HashMap::new();
-        for (index, num) in nums.iter().enumerate() {
+    pub fn two_sum(nums: &[i32], target: i32) -> Vec<i32> {
+        let mut map = HashMap::with_capacity(nums.len());
+
+        for (i, &num) in nums.iter().enumerate() {
             let complement = target - num;
-            if let Some(value) = nums_with_index.get(&complement) {
-                return vec![*value, index as i32];
+            if let Some(&index) = map.get(&complement) {
+                return vec![index as i32, i as i32];
             }
-            nums_with_index.insert(*num, index as i32);
+            map.insert(num, i);
         }
+
         vec![]
     }
 }

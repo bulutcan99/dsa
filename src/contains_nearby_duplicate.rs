@@ -20,14 +20,16 @@ impl Solution {
     /// # Döndürür
     /// Şartı sağlayan bir çift bulunursa 'true', aksi takdirde 'false'.
     pub fn contains_nearby_duplicate(nums: Vec<i32>, k: i32) -> bool {
-        let mut map: HashMap<i32, i32> = HashMap::new(); // number,index
-        for (i, num) in nums.iter().enumerate() {
+        let mut map: HashMap<i32, usize> = HashMap::with_capacity(nums.len());
+        for (i, num) in nums.into_iter().enumerate() {
             if let Some(index) = map.get(&num) {
-                if k as u32 >= index.abs_diff(i as i32) {
+                let abs_dif = i.abs_diff(*index);
+                if abs_dif <= k as usize {
                     return true;
+
                 }
             }
-            map.insert(*num, i as i32);
+            map.insert(num, i);
         }
         false
     }
