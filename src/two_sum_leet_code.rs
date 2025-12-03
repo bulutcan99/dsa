@@ -94,13 +94,12 @@ mod tests {
 }
 
 fn main() {
-    println!(
-        "Two Sum çözümünüzü 'two_sum' metoduna uygulayın ve 'cargo test' ile testleri çalıştırın."
-    );
-
-    // Örnek kullanım (isteğe bağlı)
-    let nums = vec![3, 4, 5, 6];
-    let target = 7;
-    let result = Solution::two_sum(nums, target);
-    println!("Example 1 Result: {:?}", result);
+    let mut s = String::from("hello");
+    let r1 = &s;
+    let r2 = &s;
+    println!("{}, {}", r1, r2); // Use them here
+    // Now they're out of scope
+    let r3 = &mut s;
+    r3.push_str(" world");
+    println!("{}", r3);
 }
