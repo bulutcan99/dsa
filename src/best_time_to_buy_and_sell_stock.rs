@@ -23,14 +23,11 @@ impl Solution {
             return 0;
         }
 
-        let mut long = i32::MAX;
-        let mut max_profit = i32::MIN;
-
-        for price in prices.into_iter() {
-            long = cmp::min(long, price);
-
-            let profit = price - long;
-
+        let mut lowest = i32::MAX;
+        let mut max_profit = 0;
+        for price in prices {
+            lowest = cmp::min(lowest, price);
+            let profit = price - lowest;
             max_profit = cmp::max(max_profit, profit);
         }
 
