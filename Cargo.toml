@@ -29,3 +29,11 @@ path = "src/algo.rs"
 [[bin]]
 name = "group_anagrams"
 path = "src/group_anagrams.rs"
+
+[[bin]]
+name = "selection_sort"
+path = "src/selection_sort.rs"
+
+[[bin]]
+name = "hash_map_top_k"
+path = "src/hash_map_top_k.rs"
