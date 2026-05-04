@@ -1,72 +1,97 @@
-mod two_sum_leet_code;
-
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use std::fmt::Debug;
 use std::time::Instant;
-use rand::rng;
-use rand::seq::SliceRandom;
 
 fn main() {
-    // 10 milyonluk sırasız bir veri seti oluşturuluyor
-    let mut data: Vec<i32> = (1..=10_000_000).collect();
-    data.shuffle(&mut rng());
+    // 1. Veri Hazırlığı
+    let n = 10_000_000;
+    println!("--- Veri seti hazırlanıyor (n: {}) ---", n);
 
-    let target = 112_123;
+    let mut data: Vec<i32> = (1..=n).collect();
+    let target = 7_654_321; // Aramak istediğin sayı
 
-    // Timer
-    let start = Instant::now();
-    match linear_search(&data, target) {
-        Some(index) => println!("Found {} at index: {} using linear search.", target, index),
-        None => println!("{} not found using linear search.", target),
+    // Veriyi karıştırıyoruz (Linear search ve sıralama maliyetini görmek için)
+    let mut rng = thread_rng();
+    data.shuffle(&mut rng);
+
+    // --- LINEAR SEARCH ---
+    println!("\n[Linear Search Başlatılıyor...]");
+    let start_ls = Instant::now();
+    let result_ls = linear_search(&data, target);
+    let duration_ls = start_ls.elapsed();
+
+    match result_ls {
+        Some(idx) => println!("✅ Bulundu! İndex: {}, Süre: {:?}", idx, duration_ls),
+        None => println!("❌ Bulunamadı. Süre: {:?}", duration_ls),
     }
-    println!("Linear search took {:?}", start.elapsed());
 
-    // First experiment without sorted
-    let start = Instant::now();
+    // --- BINARY SEARCH (SIRALAMA DAHİL) ---
+    // Not: Binary search için veri mutlaka sıralı olmalı.
+    // Önce sıralama süresini, sonra arama süresini ayrı ayrı ölçüyoruz.
+    println!("\n[Binary Search Başlatılıyor (Veri önce sıralanıyor)...]");
+
+    let sort_start = Instant::now();
     data.sort();
-    match binary_search(&data, target) {
-        Some(index) => println!("Found {} at index: {} using binary search.", target, index),
-        None => println!("{} not found using binary search.", target),
-    }
-    println!("First Binary search (without sorted) took {:?}", start.elapsed());
+    let sort_duration = sort_start.elapsed();
+    println!("Sıralama (sort) işlemi tamamlandı: {:?}", sort_duration);
 
-    // Second experiment with sorted
-    data.sort();
-    let start = Instant::now();
-    match binary_search(&data, target) {
-        Some(index) => println!("Found {} at index: {} using binary search.", target, index),
-        None => println!("{} not found using binary search.", target),
+    let start_bs = Instant::now();
+    let result_bs = binary_search(&data, target);
+    let duration_bs = start_bs.elapsed();
+
+    match result_bs {
+        Some(idx) => println!("✅ Bulundu! İndex: {}, Süre: {:?}", idx, duration_bs),
+        None => println!("❌ Bulunamadı. Süre: {:?}", duration_bs),
     }
-    println!("Second Binary search (with sorted) took {:?}", start.elapsed());
+
+    println!("\n--- Özet ---");
+    println!("Linear Search Toplam: {:?}", duration_ls);
+    println!(
+        "Binary Search (Sıralama + Arama): {:?}",
+        sort_duration + duration_bs
+    );
+    println!("Saf Binary Search (Sıralı Veride): {:?}", duration_bs);
 }
 
-// Linear search using iter
+/// Linear search: Veriyi tek tek gezer.
 fn linear_search<T>(list: &[T], target: T) -> Option<usize>
 where
-    T: PartialEq + Copy,
+    T: PartialEq,
 {
-    list.iter().position(|&x| x == target)
+    list.iter().position(|x| *x == target)
 }
 
-// Binary search function
+/// # Binary Search (İkili Arama) Algoritması
+///
+/// ## Tasarım Notları:
+/// 1. **Neden `len()`?**: `high` değerini `len() - 1` yerine direkt `len()` başlattık. Bu sayede liste
+///    boş olsa bile "0 - 1" işleminden kaynaklı çökme (underflow) riskini önledik ve aralığı
+///    yarım-açık (half-open) `[low, high)` şeklinde güvenle kurduk.
+///
+/// 2. **Neden `middle + 1`?**: `middle` indeksindeki elemanın hedef olmadığını `if` kontrolüyle
+///    onayladığımız için, bir sonraki aramada onu tamamen kapsam dışı bırakıyoruz. Ayrıca bu `+1`
+///    hamlesi, `low` ve `high` değerlerinin birbirine çok yaklaştığı durumlarda oluşabilecek
+///    sonsuz döngüleri engeller.
 fn binary_search<T>(list: &[T], target: T) -> Option<usize>
 where
-    T: PartialOrd + Copy + Debug,
+    T: PartialOrd + Debug,
 {
-    let mut first_part = 0;
-    let mut last_part = list.len() - 1;
+    let mut low = 0;
+    let mut high = list.len();
 
-    while first_part <= last_part {
-        let middle_part = first_part + (last_part - first_part) / 2;
-        let middle = list.get(middle_part)?;
-        if *middle == target {
-            return Some(middle_part);
-        } else if target > *middle {
-            first_part = middle_part + 1;
-        } else {
-            last_part = middle_part - 1;
+    while low < high {
+        let middle = (low + high) / 2;
+        let middle_value = list.get(middle)?;
+
+        if *middle_value == target {
+            return Some(middle);
+        } else if *middle_value < target {
+            low = middle + 1;
+        } else if *middle_value > target {
+            high = middle;
         }
     }
 
     None
 }
-
